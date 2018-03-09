@@ -49,6 +49,7 @@ type Snippet struct {
 	UpdatedAt *time.Time `json:"updated_at"`
 	CreatedAt *time.Time `json:"created_at"`
 	WebURL    string     `json:"web_url"`
+	RawURL    string     `json:"raw_url"`
 }
 
 func (s Snippet) String() string {
@@ -58,9 +59,7 @@ func (s Snippet) String() string {
 // ListSnippetsOptions represents the available ListSnippets() options.
 //
 // GitLab API docs: https://docs.gitlab.com/ce/api/snippets.html#list-snippets
-type ListSnippetsOptions struct {
-	ListOptions
-}
+type ListSnippetsOptions ListOptions
 
 // ListSnippets gets a list of snippets.
 //
@@ -203,4 +202,29 @@ func (s *SnippetsService) SnippetContent(snippet int, options ...OptionFunc) ([]
 	}
 
 	return b.Bytes(), resp, err
+}
+
+// ExploreSnippetsOptions represents the available ExploreSnippets() options.
+//
+// GitLab API docs:
+// https://docs.gitlab.com/ce/api/snippets.html#explore-all-public-snippets
+type ExploreSnippetsOptions ListOptions
+
+// ExploreSnippets gets the list of public snippets.
+//
+// GitLab API docs:
+// https://docs.gitlab.com/ce/api/snippets.html#explore-all-public-snippets
+func (s *SnippetsService) ExploreSnippets(opt *ExploreSnippetsOptions, options ...OptionFunc) ([]*Snippet, *Response, error) {
+	req, err := s.client.NewRequest("GET", "snippets/public", nil, options)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var ps []*Snippet
+	resp, err := s.client.Do(req, &ps)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return ps, resp, err
 }

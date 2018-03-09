@@ -41,6 +41,7 @@ type GroupMember struct {
 	State       string           `json:"state"`
 	CreatedAt   *time.Time       `json:"created_at"`
 	AccessLevel AccessLevelValue `json:"access_level"`
+	ExpiresAt   *ISOTime         `json:"expires_at"`
 }
 
 // ListGroupMembersOptions represents the available ListGroupMembers()
@@ -48,9 +49,7 @@ type GroupMember struct {
 //
 // GitLab API docs:
 // https://docs.gitlab.com/ce/api/members.html#list-all-members-of-a-group-or-project
-type ListGroupMembersOptions struct {
-	ListOptions
-}
+type ListGroupMembersOptions ListOptions
 
 // ListGroupMembers get a list of group members viewable by the authenticated
 // user.
